@@ -2,11 +2,8 @@
 
 package com.sats.spikes.notifications
 
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -23,13 +20,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.core.app.NotificationCompat
-import androidx.core.content.getSystemService
 import androidx.core.view.WindowCompat
 import com.sats.spikes.notifications.ui.theme.SatsNotificationsSpikeTheme
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import kotlinx.parcelize.Parcelize
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +56,7 @@ fun App() {
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-      Button(onClick = { showNotification(context, sampleGxDetails) }) {
+      Button(onClick = { context.showGxReminderNotification(sampleGxDetails) }) {
         Text("Spawn notification")
       }
 
@@ -71,33 +67,16 @@ fun App() {
   }
 }
 
-fun showNotification(context: Context, gxDetails: GxDetails) {
-  val openAppIntent = Intent(context, MainActivity::class.java)
-  val openAppPendingIntent = PendingIntent.getActivity(context, 0, openAppIntent, PendingIntent.FLAG_IMMUTABLE)
-
-  val notification = NotificationCompat.Builder(context, "rebook-gx-reminders")
-    .setSmallIcon(R.drawable.ic_gym)
-    .setContentTitle("Book next session?")
-    .setContentText("Hope you enjoined ${gxDetails.name}! Book for ${gxDetails.nextSessionDateTime.format()}?")
-    .setPriority(NotificationCompat.PRIORITY_DEFAULT) // for pre-Oreo, where channels aren't available.
-    .setContentIntent(openAppPendingIntent)
-    .setAutoCancel(true)
-    .build()
-
-  val notificationManager = context.getSystemService<NotificationManager>()
-
-  notificationManager?.notify(0, notification)
-}
-
 fun LocalDateTime.format(): String {
   return format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.SHORT))
 }
 
+@Parcelize
 data class GxDetails(
   val id: String,
   val name: String,
   val nextSessionDateTime: LocalDateTime,
-)
+) : Parcelable
 
 private val sampleGxDetails: GxDetails
   get() = GxDetails(
