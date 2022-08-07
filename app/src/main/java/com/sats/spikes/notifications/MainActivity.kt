@@ -2,10 +2,15 @@
 
 package com.sats.spikes.notifications
 
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -60,8 +65,10 @@ fun App() {
         Text("Spawn notification")
       }
 
-      Button(onClick = {}) {
-        Text("Open notification settings")
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        Button(onClick = { context.openNotificationSettings() }) {
+          Text("Open notification settings")
+        }
       }
     }
   }
@@ -88,3 +95,13 @@ private val sampleGxDetails: GxDetails
       .withMinute(0)
       .withSecond(0),
   )
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun Context.openNotificationSettings() {
+  val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+    putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+  }
+
+  startActivity(intent)
+}
