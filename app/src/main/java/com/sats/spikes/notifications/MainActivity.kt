@@ -26,7 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
-import com.sats.spikes.notifications.ui.theme.SatsNotificationsSpikeTheme
+import com.sats.spikes.notifications.ui.theme.AppTheme
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
     WindowCompat.setDecorFitsSystemWindows(window, false)
 
     setContent {
-      SatsNotificationsSpikeTheme {
+      AppTheme {
         App()
       }
     }
